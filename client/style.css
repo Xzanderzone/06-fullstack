@@ -1,0 +1,27 @@
+* {
+  margin: 4px;
+  border-radius: 6px;
+  background-color: rgb(41, 41, 41);
+  color: aliceblue;
+  text-align: center;
+}
+h1 {
+  color: rgb(0, 60, 255);
+}
+main {
+  justify-content: space-evenly;
+  display: flex;
+}
+.interface {
+  width: 45vw;
+  background-color: rgb(61, 61, 61);
+}
+.createPost {
+  display: block;
+  width: 45vw;
+  background-color: rgb(105, 105, 105);
+}
+label {
+  padding: 5px;
+  background-color: rgb(105, 105, 105);
+}
