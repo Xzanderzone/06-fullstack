@@ -1,5 +1,5 @@
 * {
-  margin: 4px;
+  margin: 6px;
   border-radius: 6px;
   background-color: rgb(41, 41, 41);
   color: aliceblue;
@@ -10,15 +10,26 @@ h1 {
 }
 main {
   justify-content: space-evenly;
-  display: flex;
 }
 .interface {
-  width: 45vw;
   background-color: rgb(61, 61, 61);
 }
 .createPost {
+  background-color: rgb(105, 105, 105);
+  /* height: 100px; */
+}
+.confirming {
+  background-color: red;
+}
+.description {
+  min-width: 400px;
+}
+.idea {
+  background-color: rgb(105, 105, 105);
   display: block;
-  width: 45vw;
+}
+p,
+h2 {
   background-color: rgb(105, 105, 105);
 }
 label {

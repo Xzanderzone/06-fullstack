@@ -5,6 +5,8 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const pool = mariadb.createPool({
   host: process.env.DB_HOST,
@@ -21,25 +23,41 @@ app.get("/", cors(), async (req, res) => {
   } catch (error) {}
 });
 
-const createIdea = async (req, res, next) => {
-  if (req.params.id == "create") {
-    let connection;
-    try {
-      connection = await pool.getConnection();
-      const prepare = await connection.query(
-        "INSERT INTO brilliant_minds.ideas(title, description) VALUES (?, ?)",
-        ["remove", "test create and deletes"]
-        // [req.body.title, req.body.description]
-      );
-      res.send(data);
-    } catch (error) {
-      throw error;
-    } finally {
-      if (connection) connection.end();
-    }
-  } else next();
-};
-app.get("/ideas/:id", cors(), createIdea, async (req, res) => {
+app.post("/ideas/create", async (req, res) => {
+  console.log("creating new ");
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const prepare = await connection.query(
+      "INSERT INTO brilliant_minds.ideas(title, description) VALUES (?, ?)",
+      [req.body.title, req.body.description]
+    );
+    res.send(data);
+  } catch (error) {
+    throw error;
+  } finally {
+    if (connection) connection.end();
+  }
+});
+
+app.put("/ideas/:id", async (req, res) => {
+  console.log("update");
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const prepare = await connection.query(
+      `UPDATE brilliant_minds.ideas SET title =?, description=? WHERE id=? `,
+      [req.body.title, req.body.description, req.params.id]
+    );
+    res.send(data);
+  } catch (error) {
+    throw error;
+  } finally {
+    if (connection) connection.end();
+  }
+});
+
+app.get("/ideas/:id", async (req, res) => {
   let connection;
   try {
     connection = await pool.getConnection();
@@ -60,7 +78,7 @@ app.get("/ideas/:id", cors(), createIdea, async (req, res) => {
   }
 });
 
-app.delete("/ideas/:id/delete", async (req, res) => {
+app.delete("/ideas/:id", async (req, res) => {
   let connection;
   try {
     connection = await pool.getConnection();
