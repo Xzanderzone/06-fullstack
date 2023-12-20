@@ -76,6 +76,7 @@ app.get("/ideas/:id", async (req, res) => {
         [id, id]
       );
     }
+    console.log(prepare);
     res.send(prepare);
   } catch (error) {
     throw error;
