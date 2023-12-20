@@ -61,15 +61,21 @@ app.get("/ideas/:id", async (req, res) => {
   let connection;
   try {
     connection = await pool.getConnection();
+    let id = req.params.id;
     let prepare;
-    if (req.params.id !== "all")
+    if (id === "all")
+      prepare = await connection.execute("SELECT * FROM brilliant_minds.ideas");
+    else if (!isNaN(id)) {
       prepare = await connection.execute(
         "SELECT * FROM brilliant_minds.ideas WHERE id = ?",
         [parseInt(req.params.id)]
       );
-    else
-      prepare = await connection.execute("SELECT * FROM brilliant_minds.ideas");
-    console.log(prepare, req.params.id);
+    } else {
+      prepare = await connection.execute(
+        `SELECT * FROM brilliant_minds.ideas WHERE title LIKE CONCAT( '%',?,'%') OR description LIKE CONCAT( '%',?,'%')`,
+        [id, id]
+      );
+    }
     res.send(prepare);
   } catch (error) {
     throw error;

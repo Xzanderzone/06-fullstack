@@ -4,8 +4,10 @@ UI.classList.add("interface");
 let shownIdeas = document.createElement("div");
 shownIdeas.classList.add("shownIdeas");
 
-const drawAll = async () => {
-  const response = await fetch("http://localhost:3000/ideas/all");
+const drawPost = async (post) => {
+  let response;
+  if (post) response = await fetch(`http://localhost:3000/ideas/${post}`);
+  else response = await fetch(`http://localhost:3000/ideas/all`);
   const data = await response.json();
   shownIdeas.innerHTML = [];
   data.forEach((idea) => {
@@ -63,9 +65,15 @@ const drawAll = async () => {
         await fetch(`http://localhost:3000/ideas/${idea.id}`, {
           method: "DELETE",
         });
-        drawAll();
+        drawPost();
       } else {
-        b_RemoveCurrent.textContent = "confirm delete";
+        b_RemoveCurrent.textContent = "one second";
+        //shortly disabeling the button to stop accidental doubleclicks
+        b_RemoveCurrent.disabled = true;
+        setTimeout(() => {
+          b_RemoveCurrent.textContent = "confirm delete";
+          b_RemoveCurrent.disabled = false;
+        }, 1000);
       }
     });
     current.appendChild(b_UpdateCurrent);
@@ -80,15 +88,18 @@ b_ViewAll.classList.add("viewAll");
 b_ViewAll.textContent = "View All Ideas";
 b_ViewAll.addEventListener("click", async () => {
   console.log("view all");
-  drawAll();
+  drawPost();
 });
 UI.appendChild(b_ViewAll);
 
 const searchBar = document.createElement("input");
 searchBar.classList.add("search");
 searchBar.placeholder = "1";
-searchBar.addEventListener("keypress", () => {
-  console.log("searching");
+searchBar.addEventListener("keypress", async (e) => {
+  if (e.key === "Enter") {
+    console.log("searching");
+    drawPost(e.target.value);
+  }
 });
 UI.appendChild(searchBar);
 
@@ -114,7 +125,7 @@ createPost.appendChild(title);
 const descriptionLabel = document.createElement("label");
 descriptionLabel.textContent = "Idea description";
 descriptionLabel.htmlFor = "description";
-const description = document.createElement("input");
+const description = document.createElement("textarea");
 description.classList.add("description");
 description.id = "description";
 description.height = "20vh";
@@ -142,7 +153,7 @@ b_create.addEventListener("click", async () => {
     },
   });
   const data = await response.json();
-  drawAll();
+  drawPost();
 });
 
 main.appendChild(createPost);
