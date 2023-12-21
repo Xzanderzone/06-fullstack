@@ -14,26 +14,32 @@ const drawPost = async (post) => {
   if (data == "") {
     const current = document.createElement("div");
     current.classList.add("idea");
-    console.log("empty");
-    //show content
+
+    //empty search
     const title = document.createElement("h2");
-    title.classList.add("title");
+    title.classList.add("warning");
     title.textContent =
       "No idea what you mean! (No ideas were found,maybe it's as a new one!";
     current.appendChild(title);
     shownIdeas.appendChild(current);
   } else
     data.forEach((idea) => {
+      //show content
       const current = document.createElement("div");
       current.classList.add("idea");
 
-      //show content
+      let x = Math.floor(Math.random() * 156);
+      let y = Math.floor(Math.random() * 156);
+      let z = Math.floor(Math.random() * 156);
+      current.style.backgroundColor = "rgb(" + x + "," + y + "," + z + ")";
+
       const title = document.createElement("input");
       title.classList.add("title");
       title.value = idea.title;
       title.disabled = true;
       current.appendChild(title);
-      const content = document.createElement("input");
+      const content = document.createElement("textarea");
+      content.style.minHeight = "45px";
       content.value = idea.description;
       content.classList.add("description");
       content.disabled = true;
@@ -44,7 +50,6 @@ const drawPost = async (post) => {
       b_UpdateCurrent.classList.add("update");
       b_UpdateCurrent.textContent = "update idea";
       b_UpdateCurrent.addEventListener("click", async () => {
-        console.log("update post");
         if (b_UpdateCurrent.textContent == "confirm changes") {
           b_UpdateCurrent.textContent = "update idea";
           content.disabled = true;
@@ -61,7 +66,6 @@ const drawPost = async (post) => {
           });
         } else {
           b_UpdateCurrent.textContent = "confirm changes";
-          //make title and description editable
           content.disabled = false;
           title.disabled = false;
         }
@@ -72,7 +76,6 @@ const drawPost = async (post) => {
       b_RemoveCurrent.classList.add("remove");
       b_RemoveCurrent.textContent = "Remove idea";
       b_RemoveCurrent.addEventListener("click", async () => {
-        console.log("remove post");
         b_RemoveCurrent.classList.toggle("confirming");
         if (b_RemoveCurrent.textContent === "confirm delete") {
           b_RemoveCurrent.textContent = "Remove idea";
@@ -87,7 +90,11 @@ const drawPost = async (post) => {
           setTimeout(() => {
             b_RemoveCurrent.textContent = "confirm delete";
             b_RemoveCurrent.disabled = false;
-          }, 1000);
+            setTimeout(() => {
+              b_RemoveCurrent.textContent = "Remove idea";
+              b_RemoveCurrent.classList.toggle("confirming");
+            }, 5000);
+          }, 750);
         }
       });
       current.appendChild(b_UpdateCurrent);
@@ -100,22 +107,32 @@ const drawPost = async (post) => {
 const b_ViewAll = document.createElement("button");
 b_ViewAll.classList.add("viewAll");
 b_ViewAll.textContent = "View All Ideas";
+b_ViewAll.style.marginLeft = "30px";
 b_ViewAll.addEventListener("click", async () => {
-  console.log("view all");
   drawPost();
 });
-UI.appendChild(b_ViewAll);
 
 const searchBar = document.createElement("input");
 searchBar.classList.add("search");
-searchBar.placeholder = "1";
+searchBar.placeholder = "title,description or id";
+searchBar.style.minWidth = "150px";
+searchBar.style.minHeight = "20px";
 searchBar.addEventListener("keypress", async (e) => {
   if (e.key === "Enter") {
-    console.log("searching");
     drawPost(e.target.value);
   }
 });
 UI.appendChild(searchBar);
+
+//extra enter button for search
+const b_SearchEnter = document.createElement("button");
+b_SearchEnter.classList.add("search");
+b_SearchEnter.textContent = "Search";
+b_SearchEnter.addEventListener("click", async () => {
+  drawPost(searchBar.value);
+});
+UI.appendChild(b_SearchEnter);
+UI.appendChild(b_ViewAll);
 main.appendChild(UI);
 
 //create a post (seperated ui)
@@ -123,28 +140,23 @@ let createPost = document.createElement("div");
 createPost.classList.add("createPost");
 
 const titleLabel = document.createElement("label");
-titleLabel.textContent = "Idea name";
+titleLabel.textContent = "Idea";
 titleLabel.htmlFor = "title";
 const title = document.createElement("input");
 title.classList.add("title");
 title.id = "title";
 title.placeholder = "enter post name";
-// title.addEventListener("keypress", () => {
-//   console.log("title");
-// });
 createPost.appendChild(titleLabel);
 createPost.appendChild(title);
 
 const descriptionLabel = document.createElement("label");
-descriptionLabel.textContent = "Idea description";
+descriptionLabel.textContent = "Description";
 descriptionLabel.htmlFor = "description";
 const description = document.createElement("textarea");
 description.classList.add("description");
 description.id = "description";
 description.placeholder = "describe the idea";
-description.addEventListener("keypress", () => {
-  console.log("description");
-});
+description.addEventListener("keypress", () => {});
 createPost.appendChild(descriptionLabel);
 createPost.appendChild(description);
 
@@ -154,7 +166,6 @@ b_create.textContent = "Create idea";
 createPost.appendChild(b_create);
 const warning = document.createElement("h2");
 b_create.addEventListener("click", async () => {
-  console.log("create post");
   let empty = "";
   if (title.value == "") empty += "Idea needs a name! ";
   if (description.value == "") empty += "Idea needs to be described!";

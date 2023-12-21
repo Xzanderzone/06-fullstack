@@ -1,12 +1,13 @@
 * {
-  margin: 6px;
+  margin: 10px;
   border-radius: 6px;
   background-color: rgb(41, 41, 41);
   color: aliceblue;
   text-align: center;
+  vertical-align: top;
 }
 h1 {
-  color: rgb(0, 60, 255);
+  color: rgb(0, 120, 255);
 }
 main {
   justify-content: space-evenly;
@@ -16,7 +17,6 @@ main {
 }
 .createPost {
   background-color: rgb(105, 105, 105);
-  /* height: 100px; */
 }
 .confirming {
   background-color: red;
@@ -35,4 +35,7 @@ h2 {
 label {
   padding: 5px;
   background-color: rgb(105, 105, 105);
+}
+button {
+  padding: 3px;
 }

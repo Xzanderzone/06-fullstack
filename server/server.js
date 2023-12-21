@@ -12,24 +12,23 @@ const pool = mariadb.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
   connectionLimit: 5,
 });
 let data = [];
 
 app.get("/", cors(), async (req, res) => {
-  // res.send({ info: `Hello World!` });
   let connection;
   try {
   } catch (error) {}
 });
 
 app.post("/ideas/create", async (req, res) => {
-  console.log("creating new ");
   let connection;
   try {
     connection = await pool.getConnection();
     const prepare = await connection.query(
-      "INSERT INTO brilliant_minds.ideas(title, description) VALUES (?, ?)",
+      "INSERT INTO ideas(title, description) VALUES (?, ?)",
       [req.body.title, req.body.description]
     );
     res.send(data);
@@ -41,12 +40,11 @@ app.post("/ideas/create", async (req, res) => {
 });
 
 app.put("/ideas/:id", async (req, res) => {
-  console.log("update");
   let connection;
   try {
     connection = await pool.getConnection();
     const prepare = await connection.query(
-      `UPDATE brilliant_minds.ideas SET title =?, description=? WHERE id=? `,
+      `UPDATE ideas SET title =?, description=? WHERE id=? `,
       [req.body.title, req.body.description, req.params.id]
     );
     res.send(data);
@@ -63,20 +61,17 @@ app.get("/ideas/:id", async (req, res) => {
     connection = await pool.getConnection();
     let id = req.params.id;
     let prepare;
-    if (id === "all")
-      prepare = await connection.execute("SELECT * FROM brilliant_minds.ideas");
+    if (id === "all") prepare = await connection.execute("SELECT * FROM ideas");
     else if (!isNaN(id)) {
-      prepare = await connection.execute(
-        "SELECT * FROM brilliant_minds.ideas WHERE id = ?",
-        [parseInt(req.params.id)]
-      );
+      prepare = await connection.execute("SELECT * FROM ideas WHERE id = ?", [
+        parseInt(req.params.id),
+      ]);
     } else {
       prepare = await connection.execute(
-        `SELECT * FROM brilliant_minds.ideas WHERE title LIKE CONCAT( '%',?,'%') OR description LIKE CONCAT( '%',?,'%')`,
+        `SELECT * FROM ideas WHERE title LIKE CONCAT( '%',?,'%') OR description LIKE CONCAT( '%',?,'%')`,
         [id, id]
       );
     }
-    console.log(prepare);
     res.send(prepare);
   } catch (error) {
     throw error;
@@ -89,9 +84,7 @@ app.delete("/ideas/:id", async (req, res) => {
   let connection;
   try {
     connection = await pool.getConnection();
-    await connection.query(`DELETE FROM brilliant_minds.ideas WHERE id=?;`, [
-      req.params.id,
-    ]);
+    await connection.query(`DELETE FROM ideas WHERE id=?;`, [req.params.id]);
     res.send("idea deleted");
   } catch (error) {
     throw error;
@@ -100,7 +93,7 @@ app.delete("/ideas/:id", async (req, res) => {
   }
 });
 
-app.listen(PORT, () =>
+app.listen(process.env.PORT, () =>
   console.log(`Server started: http://localhost:${PORT}/`)
 );
 
@@ -108,8 +101,7 @@ app.listen(PORT, () =>
   let connection;
   try {
     connection = await pool.getConnection();
-    data = await connection.query(`SELECT * FROM brilliant_minds.ideas`);
-    console.log(data);
+    data = await connection.query(`SELECT * FROM ideas`);
   } catch (err) {
     console.log("no connction");
     throw err;
