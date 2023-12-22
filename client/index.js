@@ -4,10 +4,11 @@ UI.classList.add("interface");
 let shownIdeas = document.createElement("div");
 shownIdeas.classList.add("shownIdeas");
 
+const SERVER_HOST = "http://localhost:3000";
 const drawPost = async (post) => {
   let response;
-  if (post) response = await fetch(`http://localhost:3000/ideas/${post}`);
-  else response = await fetch(`http://localhost:3000/ideas/all`);
+  if (post) response = await fetch(`${SERVER_HOST}/ideas/${post}`);
+  else response = await fetch(`${SERVER_HOST}/ideas/all`);
   const data = await response.json();
 
   shownIdeas.innerHTML = [];
@@ -19,7 +20,7 @@ const drawPost = async (post) => {
     const title = document.createElement("h2");
     title.classList.add("warning");
     title.textContent =
-      "No idea what you mean! (No ideas were found,maybe it's as a new one!";
+      "No idea what you mean! (No ideas were found,maybe it's as a new one!)";
     current.appendChild(title);
     shownIdeas.appendChild(current);
   } else
@@ -54,7 +55,7 @@ const drawPost = async (post) => {
           b_UpdateCurrent.textContent = "update idea";
           content.disabled = true;
           title.disabled = true;
-          await fetch(`http://localhost:3000/ideas/${idea.id}`, {
+          await fetch(`${SERVER_HOST}/ideas/${idea.id}`, {
             method: "PUT",
             body: JSON.stringify({
               title: title.value,
@@ -79,7 +80,7 @@ const drawPost = async (post) => {
         b_RemoveCurrent.classList.toggle("confirming");
         if (b_RemoveCurrent.textContent === "confirm delete") {
           b_RemoveCurrent.textContent = "Remove idea";
-          await fetch(`http://localhost:3000/ideas/${idea.id}`, {
+          await fetch(`${SERVER_HOST}/ideas/${idea.id}`, {
             method: "DELETE",
           });
           drawPost();
@@ -175,7 +176,7 @@ b_create.addEventListener("click", async () => {
     createPost.prepend(warning);
   } else {
     warning.hidden = true;
-    const response = await fetch(`http://localhost:3000/ideas/create`, {
+    const response = await fetch(`${SERVER_HOST}/ideas/create`, {
       method: "POST",
       body: JSON.stringify({
         title: title.value,

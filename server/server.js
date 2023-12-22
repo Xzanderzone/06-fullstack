@@ -7,10 +7,11 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.DB_PORT || 3000;
 const pool = mariadb.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
+  port: PORT,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   connectionLimit: 5,
